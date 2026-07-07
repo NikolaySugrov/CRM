@@ -1,9 +1,9 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import type { FormProps } from "../types/FormProps"
 import type { Client, ClientStatus } from "../types/Client"
 
 
-export default function ClientForm({addClient}:FormProps){
+export default function ClientForm({addClient, editingClient, updateClient}:FormProps){
     const [name, setName] = useState<string>('')
     const [phone, setPhone] = useState<string>('')
     const [email, setEmail] = useState<string>('')
@@ -11,6 +11,17 @@ export default function ClientForm({addClient}:FormProps){
     const [status, setStatus] = useState<ClientStatus>('new')
     const [budget, setBudget] = useState<string>("")
     const [error, setError] = useState<string>("")
+
+    useEffect(()=>{
+        if (!editingClient) return
+
+        setName(editingClient.name)
+        setPhone(editingClient.phone)
+        setEmail(editingClient.email)
+        setCompany(editingClient.company)
+        setStatus(editingClient.status)
+        setBudget(editingClient.budget)
+    }, [editingClient])
 
 
     function handleSubmit(event: React.SubmitEvent<HTMLFormElement>){
@@ -30,23 +41,35 @@ export default function ClientForm({addClient}:FormProps){
 
         }
         
-
-
-        const newClient:Client = {
-        id: Date.now(),
-        name: name.trim(),
-        phone: phone.trim(),
-        email: email.trim(),
-        company: company.trim(),
-        status: status,
-        budget: budget.trim(),
-        createdAt: new Date().toLocaleDateString()
-
-        }
         setError("")
 
+        if (editingClient){
+            const updatedClient:Client = {
+                ...editingClient,
+                name: name.trim(),
+                phone: phone.trim(),
+                email: email.trim(),
+                company: company.trim(),
+                status: status,
+                budget: budget.trim(),
+            }
 
-        addClient(newClient)
+            updateClient(updatedClient)
+        } else {
+            const newClient:Client = {
+            id: Date.now(),
+            name: name.trim(),
+            phone: phone.trim(),
+            email: email.trim(),
+            company: company.trim(),
+            status: status,
+            budget: budget.trim(),
+            createdAt: new Date().toLocaleDateString()
+
+            }
+
+            addClient(newClient)
+        }
         setName('')
         setPhone('')
         setEmail('')
@@ -57,7 +80,7 @@ export default function ClientForm({addClient}:FormProps){
     }
     return(
         <section className="client-form">
-            <h5>Добавить клиента</h5>
+            <h5>{editingClient ? "Изменить клиента" : "Добавить клиента"}</h5>
             <form onSubmit={handleSubmit}>
                 <div className="form-field">
                     <label htmlFor="name">Имя</label>
@@ -93,7 +116,7 @@ export default function ClientForm({addClient}:FormProps){
                     <input id="budget" type="text" placeholder="Введите бюджет" value={budget} onChange={(event)=>setBudget(event.target.value)}/>
                 </div>
                 <div className="form-field">
-                    <button type="submit">Отправить</button>
+                    <button type="submit">{editingClient ? "Сохранить" : "Отправить"}</button>
                     {error && <p className="client-form-error">{error}</p>}
 
                 </div>

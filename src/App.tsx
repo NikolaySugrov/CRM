@@ -80,6 +80,15 @@ export default function App (){
       ))
     
   }
+
+  function updateClient(updatedClient:Client){
+    setClients(prev=>prev.map((client)=>
+      client.id === updatedClient.id
+        ? updatedClient
+        : client
+    ))
+    setEditingClient(null)
+  }
   
   return (
     <div className="app">
@@ -168,7 +177,7 @@ export default function App (){
           </div>
           <ClientTable  clients={filteredClients} deleteClient={deleteClient} startEdit={setEditingClient} changeStatus={changeStatus}></ClientTable>
         </section>
-        <ClientForm addClient={addClient}></ClientForm>
+        <ClientForm addClient={addClient} editingClient={editingClient} updateClient={updateClient}></ClientForm>
         <ClientStats clients = {clients}></ClientStats>
       </main>
     </div>

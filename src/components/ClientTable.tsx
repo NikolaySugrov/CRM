@@ -1,7 +1,7 @@
 import { Pen, Trash2 } from "lucide-react"
 import type { ClientStatus } from "../types/Client"
 import type { TableProps } from "../types/TableProps"
-export default function ClientTable ({clients, deleteClient, changeStatus}:TableProps){
+export default function ClientTable ({clients, deleteClient, changeStatus, startEdit}:TableProps){
 
   function handleDelete(id:number){
     
@@ -58,7 +58,7 @@ export default function ClientTable ({clients, deleteClient, changeStatus}:Table
                     <td>{Number(el.budget).toLocaleString("ru-RU")} ₽</td>
                     <td>{el.createdAt}</td>
                     <td className="client-table-buttons">
-                        <button className="client-table-edit-button"><Pen size={18}/></button>
+                        <button className="client-table-edit-button" onClick={()=>startEdit(el)}><Pen size={18}/></button>
                         <button className="client-table-delete-button" onClick={()=>handleDelete(el.id)}><Trash2 size={18}/></button></td>
                   </tr>
                 )
